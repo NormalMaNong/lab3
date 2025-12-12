@@ -17,6 +17,7 @@ public:
         return instance;
     }
 
+    QString userLogin(QString userName, QString password);
 
 private:
     explicit IDataBase(QObject *parent = nullptr);
