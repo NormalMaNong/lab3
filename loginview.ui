@@ -178,6 +178,13 @@
      </property>
     </spacer>
    </item>
+   <item>
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>作者:郭梓轩 学号:2023414290411</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>
