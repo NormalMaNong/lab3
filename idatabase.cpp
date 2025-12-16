@@ -12,6 +12,49 @@ void IDataBase::ininDataBase()
         qDebug() << "打开数据库";
 }
 
+bool IDataBase::initPatientModel()
+{
+    patientTabModle = new QSqlTableModel(this, database);
+    patientTabModle->setTable("patient");
+    patientTabModle->setEditStrategy(QSqlTableModel::OnManualSubmit);
+    patientTabModle->setSort(patientTabModle->fieldIndex("name"),Qt::AscendingOrder);
+    if(!(patientTabModle->select()))
+        return false;
+    thePatientSelection = new QItemSelectionModel(patientTabModle);
+    return true;
+}
+
+int IDataBase::addNewPatient()
+{
+    patientTabModle->insertRow(patientTabModle->rowCount(),QModelIndex());
+    QModelIndex curIndex = patientTabModle->index(patientTabModle->rowCount() - 1,1);
+    return curIndex.row();
+}
+
+bool IDataBase::searchPatient(QString filter)
+{
+    patientTabModle->setFilter(filter);
+    return patientTabModle->select();
+}
+
+bool IDataBase::deleteCurrentPatient()
+{
+    QModelIndex curIndex = thePatientSelection->currentIndex();
+    patientTabModle->removeRow(curIndex.row());
+    patientTabModle->submitAll();
+    patientTabModle->select();
+}
+
+bool IDataBase::submitPatientEdit()
+{
+    return patientTabModle->submitAll();
+}
+
+void IDataBase::revertPatientEdit()
+{
+    patientTabModle->revertAll();
+}
+
 QString IDataBase::userLogin(QString userName, QString password)
 {
     QSqlQuery query;
