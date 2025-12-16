@@ -45,3 +45,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     lab3.qrc
+
+DISTFILES += \
+    img/del.png \
+    img/edit.png \
+    img/new.png \
+    img/search.png

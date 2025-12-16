@@ -2,6 +2,7 @@
 #include "ui_patienteditview.h"
 #include <QSqlTableModel>
 #include "idatabase.h"
+#include <QDebug>
 
 PatientEditView::PatientEditView(QWidget *parent, int index)
     : QWidget(parent)
@@ -23,6 +24,7 @@ PatientEditView::PatientEditView(QWidget *parent, int index)
     dataMapper->addMapping(ui->dbDateEditDOB, tabModel->fieldIndex("DOB"));
     dataMapper->addMapping(ui->dbComboSex, tabModel->fieldIndex("SEX"));
     dataMapper->addMapping(ui->dbCreateTimeStamp, tabModel->fieldIndex("CREATETIMESTAMP"));
+    dataMapper->addMapping(ui->dbEditAge, tabModel->fieldIndex("Age"));
 
     dataMapper->setCurrentIndex(index);
 }
@@ -34,7 +36,14 @@ PatientEditView::~PatientEditView()
 
 void PatientEditView::on_btSave_clicked()
 {
-    IDataBase::getInstance().submitPatientEdit();
+    if (!dataMapper->submit()) {
+        qDebug() << "提交到模型失败";
+        return;
+    }
+    if (!IDataBase::getInstance().submitPatientEdit()) {
+        qDebug() << "提交到数据库失败";
+        return;
+    }
     emit goPreviousView();
 }
 

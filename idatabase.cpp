@@ -1,4 +1,5 @@
 #include "idatabase.h"
+#include <QUuid>
 
 void IDataBase::ininDataBase()
 {
@@ -28,6 +29,13 @@ int IDataBase::addNewPatient()
 {
     patientTabModle->insertRow(patientTabModle->rowCount(),QModelIndex());
     QModelIndex curIndex = patientTabModle->index(patientTabModle->rowCount() - 1,1);
+
+    int curRecNO = curIndex.row();
+    QSqlRecord curRec = patientTabModle->record(curRecNO);
+    curRec.setValue("CREATETIMESTAMP",QDateTime::currentDateTime().toString("yyyy-MM-dd"));
+    curRec.setValue("ID",QUuid::createUuid().toString(QUuid::WithBraces));
+    patientTabModle->setRecord(curRecNO,curRec);
+
     return curIndex.row();
 }
 
@@ -47,7 +55,12 @@ bool IDataBase::deleteCurrentPatient()
 
 bool IDataBase::submitPatientEdit()
 {
-    return patientTabModle->submitAll();
+    bool success = patientTabModle->submitAll();
+    if (!success) {
+        qDebug() << "提交失败：" << database.lastError().text();
+        qDebug() << "模型错误：" << patientTabModle->lastError().text();
+    }
+    return success;
 }
 
 void IDataBase::revertPatientEdit()
